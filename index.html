@@ -1,1 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For You ❤️</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffd6e8, #fff1f7, #ffe3ec);
+      color: #5c2b3a;
+      overflow-x: hidden;
+    }
+
+    .screen {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 28px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(150, 40, 80, 0.25);
+      backdrop-filter: blur(8px);
+      animation: fadeUp 1s ease forwards;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    p {
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: #9b5268;
+      margin-top: 10px;
+    }
+
+    input {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 999px;
+      border: 2px solid #f6a5bf;
+      outline: none;
+      text-align: center;
+      font-size: 1rem;
+      background: #fff8fb;
+      color: #5c2b3a;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 13px 28px;
+      border: none;
+      border-radius: 999px;
+      background: #ff6f9f;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(255, 90, 140, 0.35);
+      transition: 0.25s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: #ff4f8d;
+    }
+
+    .error {
+      color: #d6336c;
+      margin-top: 12px;
+      min-height: 20px;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .envelope-area {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .envelope {
+      width: 230px;
+      height: 150px;
+      position: relative;
+      cursor: pointer;
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    .envelope .back {
+      width: 100%;
+      height: 100%;
+      background: #ff8fb3;
+      border-radius: 12px;
+      position: absolute;
+      bottom: 0;
+      box-shadow: 0 15px 35px rgba(160, 40, 80, 0.25);
+    }
+
+    .envelope .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 115px solid transparent;
+      border-right: 115px solid transparent;
+      border-top: 85px solid #ff6f9f;
+      transform-origin: top;
+      transition: 0.8s ease;
+      z-index: 3;
+    }
+
+    .envelope .letter-preview {
+      position: absolute;
+      width: 190px;
+      height: 115px;
+      background: white;
+      left: 20px;
+      bottom: 15px;
+      border-radius: 10px;
+      z-index: 2;
+      transition: 0.9s ease;
+      padding-top: 38px;
+      color: #ff5f95;
+      font-weight: bold;
+    }
+
+    .envelope.open .flap {
+      transform: rotateX(180deg);
+    }
+
+    .envelope.open .letter-preview {
+      transform: translateY(-85px);
+    }
+
+    .gallery {
+      width: 100%;
+      height: 260px;
+      border-radius: 24px;
+      overflow: hidden;
+      margin: 22px 0;
+      box-shadow: 0 15px 35px rgba(160, 40, 80, 0.2);
+      background: #ffe5ef;
+      position: relative;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      opacity: 0;
+      animation: slideshow 16s infinite;
+    }
+
+    .gallery img:nth-child(1) { animation-delay: 0s; }
+    .gallery img:nth-child(2) { animation-delay: 4s; }
+    .gallery img:nth-child(3) { animation-delay: 8s; }
+    .gallery img:nth-child(4) { animation-delay: 12s; }
+
+    .letter {
+      text-align: left;
+      background: #fff8fb;
+      padding: 22px;
+      border-radius: 22px;
+      box-shadow: inset 0 0 20px rgba(255, 160, 190, 0.25);
+      min-height: 250px;
+      white-space: pre-line;
+    }
+
+    .music-btn {
+      margin-bottom: 16px;
+      background: #b85c7a;
+    }
+
+    .heart {
+      position: fixed;
+      top: -20px;
+      color: #ff6f9f;
+      animation: fall linear forwards;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes slideshow {
+      0% { opacity: 0; }
+      8% { opacity: 1; }
+      25% { opacity: 1; }
+      33% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 22px;
+        border-radius: 24px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .gallery {
+        height: 230px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <audio id="music" loop>
+    <source src="music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <section id="lockScreen" class="screen">
+    <div class="card">
+      <h1>For Someone Special ❤️</h1>
+      <p>There is a little surprise waiting for you.</p>
+      <p class="hint">Hint: the password is <b>her name</b>.</p>
+
+      <input id="passwordInput" type="password" placeholder="Enter password" />
+      <button onclick="checkPassword()">Unlock</button>
+      <div id="error" class="error"></div>
+    </div>
+  </section>
+
+  <section id="envelopeScreen" class="screen hidden">
+    <div class="card">
+      <h1>You unlocked it 💌</h1>
+      <p>Tap the envelope to open your letter.</p>
+
+      <div class="envelope-area">
+        <div class="envelope" onclick="openEnvelope()">
+          <div class="back"></div>
+          <div class="letter-preview">Open me</div>
+          <div class="flap"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mainScreen" class="screen hidden">
+    <div class="card">
+      <button class="music-btn" onclick="playMusic()">Play Music 🎵</button>
+      <h1>Dear You ❤️</h1>
+
+      <div class="gallery">
+        <img src="photo1.jpg" alt="Photo 1" />
+        <img src="photo2.jpg" alt="Photo 2" />
+        <img src="photo3.jpg" alt="Photo 3" />
+        <img src="photo4.jpg" alt="Photo 4" />
+      </div>
+
+      <div id="letter" class="letter"></div>
+    </div>
+  </section>
+
+  <script>
+    // Change the password here
+    const correctPassword = "rachel";
+
+    const message = `When the world feels heavy, your voice is the only place my heart feels light.
+
+You are the calm in my chaos, the warmth in my cold nights, and the reason ordinary days feel like something magical.
+
+Every moment with you feels like time is moving too fast, like the universe knows I would stay here forever if it let me.
+
+Your smile feels like sunrise, your laugh sounds like home, and your presence alone can quiet every storm inside me.
+
+If the world asked me where my heart belongs, I would not need to think.
+
+It belongs wherever you are.
+
+In every lifetime, through every version of this world, I would still search for you and choose you again.`;
+
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value.toLowerCase().trim();
+      const error = document.getElementById("error");
+
+      if (input === correctPassword) {
+        document.getElementById("lockScreen").classList.add("hidden");
+        document.getElementById("envelopeScreen").classList.remove("hidden");
+        error.textContent = "";
+      } else {
+        error.textContent = "Wrong password. Try the hint 💕";
+      }
+    }
+
+    function openEnvelope() {
+      document.querySelector(".envelope").classList.add("open");
+
+      setTimeout(() => {
+        document.getElementById("envelopeScreen").classList.add("hidden");
+        document.getElementById("mainScreen").classList.remove("hidden");
+        typeLetter();
+      }, 1100);
+    }
+
+    function typeLetter() {
+      const letter = document.getElementById("letter");
+      let i = 0;
+      letter.textContent = "";
+
+      const typing = setInterval(() => {
+        letter.textContent += message.charAt(i);
+        i++;
+
+        if (i >= message.length) {
+          clearInterval(typing);
+        }
+      }, 35);
+    }
+
+    function playMusic() {
+      const music = document.getElementById("music");
+      music.play();
+    }
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.textContent = "💕";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = Math.random() * 18 + 14 + "px";
+      heart.style.animationDuration = Math.random() * 3 + 4 + "s";
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 7000);
+    }
+
+    setInterval(createHeart, 450);
+  </script>
+</body>
+</html>
 
